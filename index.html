@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VaultKey — Manager de parole</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="grid-bg"></div>
+
+<header>
+  <div class="logo">
+    <span class="logo-mark">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#070d1a" stroke-width="2.4" stroke-linecap="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+    </span>
+    VaultKey
+  </div>
+  <div class="header-actions" id="headerActions" style="display:none;">
+    <div class="search-box">
+      <input type="text" id="searchInput" placeholder="Caută...">
+    </div>
+    <button class="lock-btn" id="lockBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+      Blochează
+    </button>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- SETUP SCREEN (first run) -->
+  <section id="setupScreen" class="screen">
+    <div class="card">
+      <span class="tag">Configurare inițială</span>
+      <h1>Creează parola master</h1>
+      <p class="sub">Această parolă criptează toate datele salvate (AES-256). Trebuie s-o ții minte — nu poate fi recuperată dacă o uiți.</p>
+
+      <div class="field-group">
+        <label>Parolă master</label>
+        <input type="password" id="masterPw" placeholder="Parolă master" autocomplete="off">
+      </div>
+      <div class="field-group">
+        <label>Confirmă parola master</label>
+        <input type="password" id="masterPwConfirm" placeholder="Confirmă parola" autocomplete="off">
+      </div>
+
+      <div class="strength-row">
+        <div class="meter-track"><div class="meter-fill" id="meterFill"></div></div>
+        <span id="strengthLabel"></span>
+      </div>
+
+      <div class="warning-box">
+        ⚠️ Nu există opțiune „am uitat parola". Alege ceva puternic, dar memorabil pentru tine.
+      </div>
+
+      <button class="btn-primary" id="createVaultBtn">Creează seiful</button>
+      <p id="setupError" class="error-msg"></p>
+    </div>
+  </section>
+
+  <!-- UNLOCK SCREEN (returning user) -->
+  <section id="unlockScreen" class="screen" style="display:none;">
+    <div class="card">
+      <span class="tag">Acces securizat</span>
+      <h1>Deblochează seiful</h1>
+      <p class="sub">Introdu parola master pentru a decripta parolele salvate.</p>
+
+      <div class="field-group">
+        <label>Parolă master</label>
+        <input type="password" id="unlockPw" placeholder="Parolă master" autocomplete="off">
+      </div>
+
+      <button class="btn-primary" id="unlockBtn">Deblochează</button>
+      <p id="unlockError" class="error-msg"></p>
+
+      <button class="btn-danger-link" id="resetVaultBtn">Am uitat parola — resetează tot</button>
+    </div>
+  </section>
+
+  <!-- VAULT SCREEN (unlocked) -->
+  <section id="vaultScreen" class="screen" style="display:none;">
+    <div class="vault-head">
+      <div>
+        <span class="tag">Seif deblocat</span>
+        <h1>Parolele tale</h1>
+      </div>
+      <button class="btn-primary small" id="addEntryBtn">+ Adaugă parolă</button>
+    </div>
+
+    <div id="emptyState" class="empty-state" style="display:none;">
+      <p>Seiful e gol momentan. Adaugă prima ta parolă.</p>
+    </div>
+
+    <div id="entryList" class="entry-list"></div>
+  </section>
+
+</main>
+
+<!-- ADD/EDIT ENTRY MODAL -->
+<div class="modal-overlay" id="modalOverlay" style="display:none;">
+  <div class="modal">
+    <h3 id="modalTitle">Adaugă parolă</h3>
+    <div class="field-group">
+      <label>Site / Serviciu</label>
+      <input type="text" id="fSite" placeholder="ex: Gmail">
+    </div>
+    <div class="field-group">
+      <label>Utilizator / Email</label>
+      <input type="text" id="fUser" placeholder="ex: nume@email.com">
+    </div>
+    <div class="field-group">
+      <label>Parolă</label>
+      <div class="pw-field-row">
+        <input type="text" id="fPass" placeholder="Parolă">
+        <button class="mini-btn" id="genInModal" title="Generează parolă">🎲</button>
+      </div>
+    </div>
+    <div class="field-group">
+      <label>Notițe (opțional)</label>
+      <input type="text" id="fNotes" placeholder="Notițe">
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" id="cancelModalBtn">Anulează</button>
+      <button class="btn-primary" id="saveEntryBtn">Salvează</button>
+    </div>
+  </div>
+</div>
+
+<footer>
+  Datele sunt criptate (AES-256, derivat din parola master via PBKDF2) și salvate exclusiv local, în acest browser.
+</footer>
+
+<script src="1.js"></script>
+</body>
+</html>
